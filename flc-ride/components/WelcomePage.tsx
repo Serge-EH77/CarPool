@@ -3,6 +3,7 @@
 import { FC, ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { HeartIcon, Car, Users, MapPin, Shield, Heart, Zap, BusIcon } from "lucide-react"
+import { useState } from "react"
 
 interface WelcomePageProps {
   onLogin: () => void
@@ -10,6 +11,8 @@ interface WelcomePageProps {
 }
 
 export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
