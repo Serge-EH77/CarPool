@@ -13,7 +13,7 @@ interface LoginModalProps {
 export function LoginModal({ open, onClose }: LoginModalProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
+  
   const handleLogin = () => {
     console.log("Logging in with:", email, password)
     onClose()

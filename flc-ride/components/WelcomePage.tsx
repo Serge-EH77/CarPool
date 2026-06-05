@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { HeartIcon, Car, Users, MapPin, Shield, Heart, Zap, BusIcon } from "lucide-react"
 import { useState } from "react"
 
-interface WelcomePageProps {
+export interface WelcomePageProps {
   onLogin: () => void
   onRegister: (role: "driver" | "passenger") => void
 }
