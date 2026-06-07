@@ -31,17 +31,31 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
     }
   }, [role])
 
-  const handleRegister = () => {
-    console.log("Registering as:", currentRole, {
-      firstname,
-      lastname,
-      email,
-      password,
-      confirmPassword,
-      phonenumber,
-      carModel,
-      licensePlate,
+  const handleRegister = async() => {
+    if(password !== confirmPassword){
+        alert("Passwords do not match")
+        return
+    }
+    const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({
+            firstname,
+            lastname,
+            email,
+            password,
+            phonenumber,
+            role: currentRole,
+            ...(currentRole === "driver" ? { carModel, licensePlate } : {})
+        })
     })
+    const data = await res.json()
+
+    if(!res.ok){
+        alert(data.error || "Registration failed")
+        return
+    }
+    alert("Registration successful! Welcome, " + data.user.email)
     onClose()
   }
 

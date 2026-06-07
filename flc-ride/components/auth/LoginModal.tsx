@@ -14,8 +14,19 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   
-  const handleLogin = () => {
-    console.log("Logging in with:", email, password)
+  const handleLogin = async () => {
+    const res = await fetch ("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+    })
+    const data = await res.json()
+
+    if(!res.ok){
+        alert(data.error || "Login failed")
+        return
+    }
+    alert("Login successful! Welcome, " + data.user.email)
     onClose()
   }
 
