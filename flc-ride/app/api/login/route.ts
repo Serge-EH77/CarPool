@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     const user = rows[0]
 
-    const match = await bcrypt.compare(password, user.password)
+    const match = await bcrypt.compare(password, user.Password)
     if (!match) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 400 })
     }
@@ -25,9 +25,9 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        id: user.UserID,
+        email: user.Email,
+        role: user.Role,
       },
     })
   } catch (err) {

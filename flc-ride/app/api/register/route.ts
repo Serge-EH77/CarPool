@@ -4,25 +4,77 @@ import bcrypt from "bcryptjs"
 
 export async function POST(req: Request) {
   try {
-    const { email, password, role } = await req.json()
+    const {
+      firstname,
+      lastname,
+      email,
+      password,
+      role = "passenger",
+      phonenumber,
+      carModel,
+      licensePlate,
+    } = await req.json()
 
-    if (!email || !password || !role) {
+    if (!firstname || !lastname || !email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 })
+    }
+
+    if (role !== "driver" && role !== "passenger") {
+      return NextResponse.json({ error: "Invalid role" }, { status: 400 })
+    }
+
+    if (role === "driver" && (!carModel || !licensePlate)) {
+      return NextResponse.json(
+        { error: "Driver registration requires car model and license plate" },
+        { status: 400 }
+      )
     }
 
     const hashed = await bcrypt.hash(password, 10)
 
-    await db.query(
-      "INSERT INTO users (email, password, role) VALUES (?, ?, ?)",
-      [email, hashed, role]
-    )
+    const fields = ["Email", "Password", "Role", "FirstName", "LastName"]
+    const values = [email, hashed, role, firstname, lastname]
 
-    return NextResponse.json({ success: true })
+    if (phonenumber) {
+      fields.push("PhoneNumber")
+      values.push(phonenumber)
+    }
+
+    if (role === "driver") {
+      if (licensePlate) {
+        fields.push("LicensePlate")
+        values.push(licensePlate)
+      }
+      if (carModel) {
+        fields.push("CarModel")
+        values.push(carModel)
+      }
+    }
+
+    const query = `INSERT INTO users (${fields.join(", ")}) VALUES (${fields
+      .map(() => "?")
+      .join(", ")})`
+
+    await db.query(query, values)
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        firstname,
+        lastname,
+        email,
+        role,
+        phonenumber,
+        carModel: role === "driver" ? carModel : undefined,
+        licensePlate: role === "driver" ? licensePlate : undefined,
+      },
+    })
   } catch (err: any) {
-    if (err.code === "ER_DUP_ENTRY") {
+    if (err?.code === "ER_DUP_ENTRY") {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 })
     }
 
     return NextResponse.json({ error: "Server error" }, { status: 500 })
   }
 }
+
