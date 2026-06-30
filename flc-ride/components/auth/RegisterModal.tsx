@@ -113,29 +113,6 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          {/*<Input
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-           <Input
-            placeholder="Phone Number"
-            value={phonenumber}
-            onChange={(e) => setPhonenumber(e.target.value)}
-          />
-          <Input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Input
-            placeholder="Confirm Password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-
           {currentRole === "driver" ? (
             <>
               <Input
@@ -149,7 +126,7 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
                 onChange={(e) => setLicensePlate(e.target.value)}
               />
             </>
-          ) : null}*/}
+          ) : null}
         </div>
         <Button onClick={handleRegister} className="mt-2">
             Register as {currentRole}

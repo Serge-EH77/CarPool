@@ -34,11 +34,11 @@ const mockPassengers = [
   },
 ]
 
-interface DriverDashboardProps {
+interface DriverPageProps {
   onLogout: () => void
 }
 
-export function DriverDashboard({ onLogout }: DriverDashboardProps) {
+export function DriverPage({ onLogout }: DriverPageProps) {
   const [isAvailable, setIsAvailable] = useState(false)
 
   return (

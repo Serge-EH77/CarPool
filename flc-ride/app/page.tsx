@@ -4,10 +4,12 @@ import { useState } from "react"
 import { WelcomePage } from "@/components/WelcomePage"
 import { LoginModal } from "@/components/auth/LoginModal"
 import { RegisterModal } from "@/components/auth/RegisterModal"
+import { DriverPage } from "@/components/pages/DriverPage"
+
 export default function Home() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<"driver" | "passenger" | null>(null) 
+  const [selectedRole, setSelectedRole] = useState<"driver" | "passenger" | null>(null)
 
   return (
     <>
@@ -19,14 +21,20 @@ export default function Home() {
         }}
       />
 
-      <LoginModal 
-        open={loginOpen} 
-        onClose={() => setLoginOpen(false)} 
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onLoginSuccess={() => {
+          setLoginOpen(false)
+          if (selectedRole === "driver") {
+            window.location.href = "/DriverPage"
+          }
+        }}
       />
       <RegisterModal
-      open={registerOpen}
-      onClose={() => setRegisterOpen(false)}
-      role={selectedRole}
+        open={registerOpen}
+        onClose={() => setRegisterOpen(false)}
+        role={selectedRole}
       />
     </>
   )
