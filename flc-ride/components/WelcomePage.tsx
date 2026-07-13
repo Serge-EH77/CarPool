@@ -134,8 +134,6 @@ export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
   )
 }
 
-/* Helper Components */
-
 interface StepCardProps {
   icon: ReactNode
   title: string

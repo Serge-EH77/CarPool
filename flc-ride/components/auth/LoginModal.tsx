@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface LoginModalProps {
   open: boolean
@@ -14,6 +15,7 @@ interface LoginModalProps {
 export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const router = useRouter()
 
   const handleLogin = async () => {
     const res = await fetch("/api/login", {
@@ -27,7 +29,11 @@ export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
       alert(data.error || "Login failed")
       return
     }
-
+    if (data.user.role === "driver") {
+      router.push("/driver")
+    } else if (data.user.role === "passenger") {
+      router.push("/passenger")
+    }
     alert("Login successful! Welcome, " + data.user.email)
     onClose()
     onLoginSuccess?.()

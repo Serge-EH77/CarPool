@@ -4,7 +4,6 @@ import { useState } from "react"
 import { WelcomePage } from "@/components/WelcomePage"
 import { LoginModal } from "@/components/auth/LoginModal"
 import { RegisterModal } from "@/components/auth/RegisterModal"
-import { DriverPage } from "@/components/pages/DriverPage"
 
 export default function Home() {
   const [loginOpen, setLoginOpen] = useState(false)
@@ -27,7 +26,7 @@ export default function Home() {
         onLoginSuccess={() => {
           setLoginOpen(false)
           if (selectedRole === "driver") {
-            window.location.href = "/DriverPage"
+            window.location.href = "/driver"
           }
         }}
       />
