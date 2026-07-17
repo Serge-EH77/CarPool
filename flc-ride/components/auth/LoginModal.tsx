@@ -29,12 +29,19 @@ export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
       alert(data.error || "Login failed")
       return
     }
+    localStorage.setItem("firstname", data.user.firstname)
+
+    if (data.user.role === "admin") {
+      localStorage.setItem("firstname", data.user.firstname)
+      localStorage.setItem("role", data.user.role)
+      router.push("/admin")
+    }
     if (data.user.role === "driver") {
       router.push("/driver")
     } else if (data.user.role === "passenger") {
       router.push("/passenger")
     }
-    alert("Login successful! Welcome, " + data.user.email)
+    alert("Login successful! Welcome, " + data.user.firstname)
     onClose()
     onLoginSuccess?.()
   }

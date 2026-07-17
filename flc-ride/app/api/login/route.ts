@@ -10,7 +10,6 @@ export async function POST(req: Request) {
       "SELECT * FROM users WHERE email = ? LIMIT 1",
       [email]
     )
-
     if (rows.length === 0) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 400 })
     }
@@ -21,13 +20,13 @@ export async function POST(req: Request) {
     if (!match) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 400 })
     }
-
     return NextResponse.json({
       success: true,
       user: {
         id: user.UserID,
         email: user.Email,
         role: user.Role,
+        firstname: user.FirstName,
       },
     })
   } catch (err) {

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { Calendar, Clock, MapPin, Phone, Car, Navigation, User } from "lucide-react"
 
+const useEffect = require("react").useEffect
 const nextSundayService = {
   date: "Sunday, January 14, 2024",
   time: "10:00 AM – 12:00 PM",
@@ -40,7 +41,13 @@ interface DriverPageProps {
 
 export function DriverPage({ onLogout }: DriverPageProps) {
   const [isAvailable, setIsAvailable] = useState(false)
+   const [firstname, setFirstname] = useState("")
 
+  useEffect(() => {
+  const name = localStorage.getItem("firstname")
+  console.log("Loaded firstname:", name)
+  if (name) setFirstname(name)
+}, [])
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -53,6 +60,13 @@ export function DriverPage({ onLogout }: DriverPageProps) {
           <Button onClick={onLogout} variant="outline">
             Logout
           </Button>
+        </div>
+
+        {/* Welcome Banner */}
+        <div className="bg-black-600 text-black p-4 rounded-lg shadow">
+          <h2 className="text-xl font-bold">
+            Welcome back, {firstname}
+          </h2>
         </div>
 
         {/* Service Information */}

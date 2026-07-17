@@ -13,9 +13,10 @@ export async function POST(req: Request) {
       phonenumber,
       carModel,
       licensePlate,
+      address,
     } = await req.json()
 
-    if (!firstname || !lastname || !email || !password) {
+    if (!firstname || !lastname || !email || !password || !address) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
 
@@ -32,8 +33,8 @@ export async function POST(req: Request) {
 
     const hashed = await bcrypt.hash(password, 10)
 
-    const fields = ["Email", "Password", "Role", "FirstName", "LastName"]
-    const values = [email, hashed, role, firstname, lastname]
+    const fields = ["Email", "Password", "Role", "FirstName", "LastName", "Address"]
+    const values = [email, hashed, role, firstname, lastname, address]
 
     if (phonenumber) {
       fields.push("PhoneNumber")
@@ -67,6 +68,7 @@ export async function POST(req: Request) {
         phonenumber,
         carModel: role === "driver" ? carModel : undefined,
         licensePlate: role === "driver" ? licensePlate : undefined,
+        address,
       },
     })
   } catch (err: any) {

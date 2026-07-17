@@ -24,6 +24,7 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
   const [phonenumber, setPhonenumber] = useState("")
   const [carModel, setCarModel] = useState("")
   const [licensePlate, setLicensePlate] = useState("")
+  const [address, setAddress] = useState("")
 
   useEffect(() => {
     if (role) {
@@ -32,6 +33,13 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
   }, [role])
 
   const handleRegister = async() => {
+    const validatePassword = (password: string) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+};
+    if (!validatePassword(password)) {
+      alert("Password must contain upper, lower, number, and be at least 8 characters");
+      return;
+}
     if(password !== confirmPassword){
         alert("Passwords do not match")
         return
@@ -46,7 +54,8 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             password,
             phonenumber,
             role: currentRole,
-            ...(currentRole === "driver" ? { carModel, licensePlate } : {})
+            ...(currentRole === "driver" ? { carModel, licensePlate } : {}),
+            address
         })
     })
     const data = await res.json()
@@ -55,7 +64,7 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
         alert(data.error || "Registration failed")
         return
     }
-    alert("Registration successful! Welcome, " + data.user.email)
+    alert("Registration successful! Welcome, " + data.user.firstname)
     onClose()
   }
 
@@ -101,6 +110,11 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             onChange={(e) => setEmail(e.target.value)}
           />
           <Input
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+          <Input
             placeholder="Password"
             type="password"
             value={password}
@@ -112,7 +126,6 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-
           {currentRole === "driver" ? (
             <>
               <Input
