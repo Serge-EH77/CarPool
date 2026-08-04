@@ -3,12 +3,26 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Clock, Calendar, User } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { useState } from "react"
 
 interface PassengerPageProps {
   onLogout: () => void
 }
 
 export function PassengerPage({ onLogout }: PassengerPageProps) {
+  const [isAvailable, setIsAvailable] = useState(false)
+
+  async function togglePassengerAvailability(value: boolean) {
+    const userId = Number(localStorage.getItem("userId"))
+    setIsAvailable(value)
+    await fetch("/api/passenger/availability", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, isAvailable: value }),
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -21,6 +35,28 @@ export function PassengerPage({ onLogout }: PassengerPageProps) {
             Logout
           </Button>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Your Availability
+            </CardTitle>
+            <CardDescription>Let us know if you'll be attending this service</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="availability"
+                checked={isAvailable}
+                onCheckedChange={(value) => togglePassengerAvailability(value)}
+              />
+              <label htmlFor="availability" className="text-sm font-medium">
+                I will be attending
+              </label>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

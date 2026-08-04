@@ -39,6 +39,8 @@ interface DriverPageProps {
   onLogout: () => void
 }
 
+
+
 export function DriverPage({ onLogout }: DriverPageProps) {
   const [isAvailable, setIsAvailable] = useState(false)
    const [firstname, setFirstname] = useState("")
@@ -48,6 +50,16 @@ export function DriverPage({ onLogout }: DriverPageProps) {
   console.log("Loaded firstname:", name)
   if (name) setFirstname(name)
 }, [])
+
+  async function toggleDriverAvailability(value: boolean) {
+    const userId = Number(localStorage.getItem("userId"))
+    setIsAvailable(value)
+    await fetch("/api/driver/availability", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, isAvailable: value }),
+    })
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -102,11 +114,15 @@ export function DriverPage({ onLogout }: DriverPageProps) {
               <Car className="h-5 w-5" />
               Driver Availability
             </CardTitle>
-            <CardDescription>Let us know if you're available to drive for this service</CardDescription>
+            <CardDescription> Let us know if you're available to drive for this service</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Switch id="availability" checked={isAvailable} onCheckedChange={setIsAvailable} />
+             <Switch
+                id="availability"
+                checked={isAvailable}
+                onCheckedChange={(value) => toggleDriverAvailability(value)}
+              />
               <label htmlFor="availability" className="text-sm font-medium">
                 I'm available to drive for this service
               </label>

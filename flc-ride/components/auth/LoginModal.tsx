@@ -24,12 +24,14 @@ export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
       body: JSON.stringify({ email, password }),
     })
     const data = await res.json()
+    console.log("LOGIN RESPONSE:", data)
 
     if (!res.ok) {
       alert(data.error || "Login failed")
       return
     }
     localStorage.setItem("firstname", data.user.firstname)
+    localStorage.setItem("userId", data.user.id)
 
     if (data.user.role === "admin") {
       localStorage.setItem("firstname", data.user.firstname)
