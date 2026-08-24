@@ -22,6 +22,7 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [phonenumber, setPhonenumber] = useState("")
+  const [capacity, setCapacity] = useState ("")
   const [carModel, setCarModel] = useState("")
   const [licensePlate, setLicensePlate] = useState("")
   const [address, setAddress] = useState("")
@@ -55,7 +56,8 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             phonenumber,
             role: currentRole,
             ...(currentRole === "driver" ? { carModel, licensePlate } : {}),
-            address
+            address,
+            capacity,
         })
     })
     const data = await res.json()
@@ -126,6 +128,12 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          <Input 
+            placeholder = "Your phone number"
+            type = "tel"
+            value = {phonenumber}
+            onChange= {(e) => setPhonenumber(e.target.value)}
+          />
           {currentRole === "driver" ? (
             <>
               <Input
@@ -137,6 +145,13 @@ export function RegisterModal({ open, onClose, role }: RegisterModalProps) {
                 placeholder="License Plate"
                 value={licensePlate}
                 onChange={(e) => setLicensePlate(e.target.value)}
+              />
+              <Input 
+                placeholder = "How many people can you pick up"
+                type = "number"
+                value = {capacity}
+                min ="1"
+                onChange= {(e) => setCapacity(e.target.value)}
               />
             </>
           ) : null}

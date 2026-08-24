@@ -11,8 +11,6 @@ export interface WelcomePageProps {
 }
 
 export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
