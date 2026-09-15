@@ -25,6 +25,19 @@ export default function DriverPage() {
     }
   }
 
+   async function fetchAvailability() {
+    try {
+      const userId = Number(localStorage.getItem("userId"))
+      if (!userId) return
+
+      const res = await fetch(`/api/driver/availability?userId=${userId}`)
+      const data = await res.json()
+      setIsAvailable(!!data.isAvailable)
+    } catch (error) {
+      console.error("Failed to fetch availability:", error)
+    }
+  }
+
   async function fetchAssignments() {
     try {
       const driverId = Number(localStorage.getItem("userId"))
@@ -52,6 +65,7 @@ export default function DriverPage() {
 
     fetchLiveEvent()
     fetchAssignments()
+    fetchAvailability()
   }, [])
 
   async function toggleDriverAvailability(value: boolean) {
@@ -64,7 +78,7 @@ export default function DriverPage() {
       body: JSON.stringify({ userId, isAvailable: value })
     })
 
-    // Refresh assignments when availability changes
+   
     if (value) fetchAssignments()
   }
 

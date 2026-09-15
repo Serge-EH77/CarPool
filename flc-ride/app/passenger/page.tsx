@@ -25,9 +25,22 @@ export default function PassengerPage() {
       body: JSON.stringify({ userId, isAvailable: value }),
     })
 
-    if (value) fetchAssignment()
+    if (value==true) fetchAssignment()
+  }
+  async function fetchAvailability() {
+    try {
+      const userId = Number(localStorage.getItem("userId"))
+      if (!userId) return
+
+      const res = await fetch(`/api/passenger/availability?userId=${userId}`)
+      const data = await res.json()
+      setIsAvailable(!!data.isAvailable)
+    } catch (error) {
+      console.error("Failed to fetch availability:", error)
+    }
   }
 
+  
   async function fetchLiveEvent() {
     try {
       const res = await fetch("/api/admin/events/getLive")
@@ -69,6 +82,7 @@ export default function PassengerPage() {
 
     fetchLiveEvent()
     fetchAssignment()
+    fetchAvailability()
   }, [])
 
   return (
