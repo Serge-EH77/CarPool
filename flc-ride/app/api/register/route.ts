@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       carModel,
       licensePlate,
       address,
+      capacity
     } = await req.json()
 
     if (!firstname || !lastname || !email || !password || !address) {
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 })
     }
 
-    if (role === "driver" && (!carModel || !licensePlate)) {
+    if (role === "driver" && (!carModel || !licensePlate || !capacity)) {
       return NextResponse.json(
         { error: "Driver registration requires car model and license plate" },
         { status: 400 }
@@ -35,6 +36,15 @@ export async function POST(req: Request) {
 
     const fields = ["Email", "Password", "Role", "FirstName", "LastName", "Address"]
     const values = [email, hashed, role, firstname, lastname, address]
+
+    if(role==="driver"){
+      fields.push("Capacity")
+      values.push(capacity)
+    }
+    else if(role==="passenger"){
+      fields.push("Capacity")
+      values.push(0) //default capacity for passenger is 0
+    }
 
     if (phonenumber) {
       fields.push("PhoneNumber")
@@ -69,12 +79,14 @@ export async function POST(req: Request) {
         carModel: role === "driver" ? carModel : undefined,
         licensePlate: role === "driver" ? licensePlate : undefined,
         address,
+        capacity: role === "driver" ? capacity : undefined,
       },
     })
   } catch (err: any) {
     if (err?.code === "ER_DUP_ENTRY") {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 })
     }
+    console.error("Registration error:", err)
 
     return NextResponse.json({ error: "Server error" }, { status: 500 })
   }

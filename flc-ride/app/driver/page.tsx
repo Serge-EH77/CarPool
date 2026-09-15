@@ -1,124 +1,157 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { Calendar, Clock, MapPin, Phone, Car, Navigation, User } from "lucide-react"
+import { Calendar, Clock, MapPin, Phone, Car, Navigation, User, BookOpen } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-const useEffect = require("react").useEffect
-const nextSundayService = {
-  date: "Sunday, January 14, 2024",
-  time: "10:00 AM – 12:00 PM",
-  location: "Main Church Building",
-}
-
-const mockPassengers = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    address: "123 Oak Street, Springfield",
-    distance: "2.3 miles away",
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    address: "456 Pine Avenue, Springfield",
-    distance: "1.8 miles away",
-  },
-  {
-    id: 3,
-    name: "Emma Rodriguez",
-    address: "789 Maple Drive, Springfield",
-    distance: "3.1 miles away",
-  },
-]
-
-interface DriverPageProps {
-  onLogout: () => void
-}
-
-
-
-export default function DriverPage({ onLogout }: DriverPageProps) {
+export default function DriverPage() {
   const [isAvailable, setIsAvailable] = useState(false)
-   const [firstname, setFirstname] = useState("")
+  const [firstname, setFirstname] = useState("")
+  const [liveEvent, setLiveEvent] = useState<any>(null)
+  const [assignedPassengers, setAssignedPassengers] = useState<any[]>([])
+  const router = useRouter()
+
+  async function fetchLiveEvent() {
+    try {
+      const res = await fetch("/api/admin/events/getLive")
+      const data = await res.json()
+      setLiveEvent(data.event)
+    } catch (error) {
+      console.error("Failed to fetch live event:", error)
+    }
+  }
+
+  async function fetchAssignments() {
+    try {
+      const driverId = Number(localStorage.getItem("userId"))
+      if (!driverId) return
+
+      const res = await fetch("/api/driver/assignments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ driverId })
+      })
+
+      const data = await res.json()
+
+      if (data.passengers) {
+        setAssignedPassengers(data.passengers)
+      }
+    } catch (error) {
+      console.error("Failed to fetch assignments:", error)
+    }
+  }
 
   useEffect(() => {
-  const name = localStorage.getItem("firstname")
-  console.log("Loaded firstname:", name)
-  if (name) setFirstname(name)
-}, [])
+    const name = localStorage.getItem("firstname")
+    if (name) setFirstname(name)
+
+    fetchLiveEvent()
+    fetchAssignments()
+  }, [])
 
   async function toggleDriverAvailability(value: boolean) {
     const userId = Number(localStorage.getItem("userId"))
     setIsAvailable(value)
+
     await fetch("/api/driver/availability", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, isAvailable: value }),
+      body: JSON.stringify({ userId, isAvailable: value })
     })
+
+    // Refresh assignments when availability changes
+    if (value) fetchAssignments()
   }
+
+  async function handleLogout() {
+    localStorage.removeItem("firstname")
+    localStorage.removeItem("userId")
+    localStorage.removeItem("role")
+    router.push("/")
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="mx-auto max-w-4xl space-y-6">
+
         {/* Header */}
         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Driver Dashboard</h1>
             <p className="text-gray-600">Manage your transportation assignments</p>
           </div>
-          <Button onClick={onLogout} variant="outline">
-            Logout
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button onClick={() => router.push("/driver/settings")} variant="secondary">
+              Settings
+            </Button>
+            <Button onClick={handleLogout} variant="outline">
+              Logout
+            </Button>
+          </div>
         </div>
 
-        {/* Welcome Banner */}
+        {/* Welcome */}
         <div className="bg-black-600 text-black p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold">
-            Welcome back, {firstname}
-          </h2>
+          <h2 className="text-xl font-bold">Welcome back, {firstname}</h2>
         </div>
 
-        {/* Service Information */}
+        {/* Live Event */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Next Sunday Service
+              {liveEvent ? "Next Service" : "No service is scheduled"}
             </CardTitle>
+            <CardDescription>
+              {liveEvent
+                ? "This is our next service."
+                : "No service is scheduled at the moment."}
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">{nextSundayService.date}</span>
+
+          {liveEvent && (
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm">{liveEvent.name}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm">{liveEvent.date}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm">{liveEvent.time}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <MapPin className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm">{liveEvent.location}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">{nextSundayService.time}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">{nextSundayService.location}</span>
-              </div>
-            </div>
-          </CardContent>
+            </CardContent>
+          )}
         </Card>
 
-        {/* Availability Toggle */}
+        {/* Availability */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Car className="h-5 w-5" />
               Driver Availability
             </CardTitle>
-            <CardDescription> Let us know if you're available to drive for this service</CardDescription>
+            <CardDescription>
+              Let us know if you're available to drive for this service
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-             <Switch
+              <Switch
                 id="availability"
                 checked={isAvailable}
                 onCheckedChange={(value) => toggleDriverAvailability(value)}
@@ -137,35 +170,42 @@ export default function DriverPage({ onLogout }: DriverPageProps) {
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
                 Assigned Passengers
-                <Badge variant="secondary">{mockPassengers.length}</Badge>
+                <Badge variant="secondary">{assignedPassengers.length}</Badge>
               </CardTitle>
               <CardDescription>Passengers assigned to your vehicle</CardDescription>
             </CardHeader>
+
             <CardContent>
-              <div className="space-y-4">
-                {mockPassengers.map((passenger) => (
-                  <div key={passenger.id} className="flex items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-500" />
-                        <span className="font-medium">{passenger.name}</span>
+              {assignedPassengers.length === 0 ? (
+                <p className="text-gray-500">No passengers assigned yet.</p>
+              ) : (
+                <div className="space-y-4">
+                  {assignedPassengers.map((p) => (
+                    <div
+                      key={p.UserID}
+                      className="flex items-center justify-between rounded-lg border p-4"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-500" />
+                          <span className="font-medium">
+                            {p.FirstName} {p.LastName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <MapPin className="h-3 w-3" />
+                          <span>{p.Address}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="h-3 w-3" />
-                        <span>{passenger.address}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Navigation className="h-3 w-3 text-blue-500" />
-                        <span className="text-sm text-blue-600">{passenger.distance}</span>
-                      </div>
+
+                      <Button size="sm" variant="outline">
+                        <Phone className="mr-2 h-4 w-4" />
+                        Contact
+                      </Button>
                     </div>
-                    <Button size="sm" variant="outline">
-                      <Phone className="mr-2 h-4 w-4" />
-                      Contact
-                    </Button>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -176,7 +216,9 @@ export default function DriverPage({ onLogout }: DriverPageProps) {
               <div className="text-center text-gray-500">
                 <Car className="mx-auto h-12 w-12 text-gray-300" />
                 <h3 className="mt-2 text-sm font-medium">No assignments yet</h3>
-                <p className="mt-1 text-sm">Toggle your availability to see passenger assignments</p>
+                <p className="mt-1 text-sm">
+                  Toggle your availability to see passenger assignments
+                </p>
               </div>
             </CardContent>
           </Card>
