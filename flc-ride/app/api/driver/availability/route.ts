@@ -39,3 +39,22 @@ export async function POST(req: Request) {
     )
   }
 }
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const userId = Number(searchParams.get("userId"))
+
+  if (!userId) {
+    return NextResponse.json({ error: "Missing userId" }, { status: 400 })
+  }
+
+  const [rows]: any = await db.query(
+    "SELECT IsAvailable FROM users WHERE UserID=? LIMIT 1",
+    [userId]
+  )
+
+  if (rows.length === 0) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 })
+  }
+
+  return NextResponse.json({ isAvailable: !!rows[0].IsAvailable })
+}
