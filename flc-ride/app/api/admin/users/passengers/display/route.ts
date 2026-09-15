@@ -7,11 +7,11 @@ export async function GET() {
   )
 
   const normalized = rows.map((row) => ({
-    id: row.UserID,
+    UserId: row.UserID,
     firstname: row.FirstName,
     lastname: row.LastName,
     email: row.Email,
-    isAvailable: Boolean(row.IsAvailable)
+    isAvailable: Boolean(row.IsAvailable),
   }))
 
   return NextResponse.json({ passengers: normalized })
