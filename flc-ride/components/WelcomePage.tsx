@@ -1,18 +1,38 @@
 "use client"
 
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { HeartIcon, Car, Users, MapPin, Shield, Heart, Zap, BusIcon } from "lucide-react"
-import { useState } from "react"
 
 export interface WelcomePageProps {
   onLogin: () => void
   onRegister: (role: "driver" | "passenger") => void
+  setRegisterOpen: (open: boolean) => void
 }
 
-export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
+export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister, setRegisterOpen }) => {
+
+  // Invite‑link registration auto‑open
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const token = params.get("token")
+
+    if (!token) return
+
+    fetch(`/api/admin/register/validate?token=${token}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.valid) {
+          setRegisterOpen(true)
+        } else {
+          alert("Registration link expired or invalid.")
+        }
+      })
+  }, [setRegisterOpen])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
       {/* Header */}
       <header className="sticky top-0 z-20 border-b bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -24,8 +44,8 @@ export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={onLogin}>Sign In</Button>
-            <Button onClick={() => onRegister("passenger")}>Get Started</Button>
+            <Button variant="outline" onClick={onLogin}>Sign In</Button>
+            {/* Removed public registration button */}
           </div>
         </div>
       </header>
@@ -52,7 +72,7 @@ export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
 
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <StepCard icon={<Users className="h-6 w-6 text-blue-600" />} title="Register">
-              Sign up as a driver or passenger to join our transportation network.
+              Members receive a private invite link to join our transportation network.
             </StepCard>
 
             <StepCard icon={<MapPin className="h-6 w-6 text-green-600" />} title="Get Matched">
@@ -98,18 +118,12 @@ export const WelcomePage: FC<WelcomePageProps> = ({ onLogin, onRegister }) => {
             Ready to Get Started?
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Join our transportation ministry and help ensure everyone can attend church services.
+            Registration is available only through private invite links sent to church members.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" onClick={() => onRegister("passenger")} className="w-full px-8 sm:w-auto">
-              <Users className="mr-2 h-5 w-5" />
-              Register as a Passenger
-            </Button>
-
-            <Button size="lg" variant="outline" onClick={() => onRegister("driver")} className="w-full px-8 sm:w-auto">
-              <Car className="mr-2 h-5 w-5" />
-              Register as a Driver
+            <Button size="lg" onClick={onLogin} className="w-full px-8 sm:w-auto">
+              Sign In
             </Button>
           </div>
         </div>

@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Metadata } from "next"
 
 interface LoginModalProps {
   open: boolean
   onClose: () => void
   onLoginSuccess?: () => void
 }
+
 
 export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
   const [email, setEmail] = useState("")

@@ -18,6 +18,7 @@ export default function Home() {
           setSelectedRole(role)
           setRegisterOpen(true)
         }}
+        setRegisterOpen={setRegisterOpen}
       />
 
       <LoginModal
@@ -38,3 +39,4 @@ export default function Home() {
     </>
   )
 }
+
