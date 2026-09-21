@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       capacity
     } = await req.json()
 
-    if (!firstname || !lastname || !email || !password || !address) {
+    if (!firstname || !lastname || !email || !password || !address || !phonenumber) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
 
@@ -34,8 +34,8 @@ export async function POST(req: Request) {
 
     const hashed = await bcrypt.hash(password, 10)
 
-    const fields = ["Email", "Password", "Role", "FirstName", "LastName", "Address"]
-    const values = [email, hashed, role, firstname, lastname, address]
+    const fields = ["Email", "Password", "Role", "FirstName", "LastName", "Address", "PhoneNumber"]
+    const values = [email, hashed, role, firstname, lastname, address, phonenumber]
 
     if(role==="driver"){
       fields.push("Capacity")
@@ -44,11 +44,6 @@ export async function POST(req: Request) {
     else if(role==="passenger"){
       fields.push("Capacity")
       values.push(0) //default capacity for passenger is 0
-    }
-
-    if (phonenumber) {
-      fields.push("PhoneNumber")
-      values.push(phonenumber)
     }
 
     if (role === "driver") {
