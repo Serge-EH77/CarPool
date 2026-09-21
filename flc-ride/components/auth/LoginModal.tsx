@@ -21,7 +21,7 @@ export function LoginModal({ open, onClose, onLoginSuccess }: LoginModalProps) {
   const [code, setCode] = useState("")
   const [userId, setUserId] = useState<number | null>(null)
   const [forgotStep, setForgotStep] = useState(false)
-const [forgotEmail, setForgotEmail] = useState("")
+  const [forgotEmail, setForgotEmail] = useState("")
 
   const router = useRouter()
 
@@ -41,17 +41,14 @@ const [forgotEmail, setForgotEmail] = useState("")
       alert(data.error || "Login failed")
       return
     }
-
-    
     if (data.requires2fa) {
       setUserId(data.userId)
       setStep("verify")
       return
     }
-
     localStorage.setItem("firstname", data.user.firstname)
     localStorage.setItem("userId", data.user.id)
-    localStorage.setItem("role", data.user.role)
+
 
     if (data.user.role === "admin") {
       router.push("/admin")
@@ -60,7 +57,6 @@ const [forgotEmail, setForgotEmail] = useState("")
     } else if (data.user.role === "passenger") {
       router.push("/passenger")
     }
-
     onClose()
     onLoginSuccess?.()
   }
@@ -90,7 +86,7 @@ const [forgotEmail, setForgotEmail] = useState("")
     localStorage.setItem("firstname", userData.user.firstname)
     localStorage.setItem("userId", userData.user.id)
     localStorage.setItem("role", userData.user.role)
-
+    
     if (userData.user.role === "admin") {
       router.push("/admin")
     } else if (userData.user.role === "driver") {
