@@ -105,6 +105,10 @@ export default function PassengerPage() {
           </div>
         </div>
 
+         <div className="bg-black-600 text-black p-4 rounded-lg shadow">
+          <h2 className="text-xl font-bold">Welcome back, {firstname}</h2>
+        </div>
+
         {/* Availability */}
         <Card>
           <CardHeader>

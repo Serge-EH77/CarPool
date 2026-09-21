@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
+import { Circle, User } from "lucide-react"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+
 
 export default function PassengerSettings() {
   const router = useRouter()
@@ -13,7 +16,7 @@ export default function PassengerSettings() {
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
-    phone: "",
+    phonenumber: "",
     address: ""
   })
 
@@ -23,21 +26,14 @@ export default function PassengerSettings() {
     confirmPassword: ""
   })
 
+  const [firstname, setFirstname] = useState("")
+  const [lastname, setLastname] = useState("")
+ 
+
   useEffect(() => {
-    const id = localStorage.getItem("userId")
-
-    fetch(`/api/passenger/settings/get?id=${id}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.user) return
-
-        setForm({
-          firstname: data.user.firstname ?? "",
-          lastname: data.user.lastname ?? "",
-          phone: data.user.phone ?? "",
-          address: data.user.address ?? ""
-        })
-      })
+    const firstname = localStorage.getItem("firstname")
+    if (firstname) setFirstname(firstname)
+    //userProfile()
   }, [])
 
   async function updateProfile() {
@@ -50,7 +46,10 @@ export default function PassengerSettings() {
     })
 
     const data = await res.json()
-    if (data.success) alert("Profile updated!")
+    if (data.success) {
+      alert("Profile updated!")
+     // userProfile()
+    }
   }
 
   async function changePassword() {
@@ -63,9 +62,25 @@ export default function PassengerSettings() {
     })
 
     const data = await res.json()
-    if (data.success) alert("Password changed!")
-    else alert(data.error)
+    if (data.success) {
+      alert("Password changed!")
+      setPasswordForm({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      })
+    } else alert(data.error)
   }
+
+  {/*async function userProfile(){
+    const id = localStorage.getItem("userId")
+    const res = await fetch(`/api/passenger/settings/get?id=${id}`)
+    const data = await res.json()
+    if (!data.user) return
+
+    setFirstname(data.user.firstname)
+    setLastname(data.user.lastname)
+  }*/}
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
@@ -85,7 +100,17 @@ export default function PassengerSettings() {
       </div>
 
       <Separator />
-
+      {/*<div className="flex items-center gap-4 mb-4" >
+        <Avatar className="w-16 h-16 mb-4">
+          <AvatarFallback>
+            <User className="w-16 h-16 mb-4" />
+          </AvatarFallback>
+          </Avatar>
+          <p>
+            <strong>{firstname} {lastname}</strong> 
+          </p>
+      </div>*/}
+      
       {/* Profile Section */}
       <Card>
         <CardHeader>
@@ -108,11 +133,11 @@ export default function PassengerSettings() {
 
           <Input
             placeholder="Phone Number"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            value={form.phonenumber}
+            onChange={(e) => setForm({ ...form, phonenumber: e.target.value })}
           />
 
-          <Button className="md:col-span-2" onClick={updateProfile}>
+          <Button onClick={updateProfile}>
             Save Profile
           </Button>
         </CardContent>
