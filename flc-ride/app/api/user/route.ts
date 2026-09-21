@@ -18,6 +18,9 @@ export async function GET(req: Request) {
       email: user.Email,
       role: user.Role,
       firstname: user.FirstName,
+      lastname: user.LastName,
+      phonenumber: user.PhoneNumber,
+      address: user.Address,
     },
   })
 }

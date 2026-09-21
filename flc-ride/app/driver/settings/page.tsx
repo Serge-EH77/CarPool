@@ -13,7 +13,7 @@ export default function DriverSettings() {
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
-    phone: "",
+    phonenumber: "",
     car: "",
     capacity: ""
   })
@@ -30,12 +30,13 @@ export default function DriverSettings() {
     fetch(`/api/driver/settings/get?id=${id}`)
       .then(res => res.json())
       .then(data => {
+        if (!data.user) return
         setForm({
-          firstname: data.user.firstname,
-          lastname: data.user.lastname,
-          phone: data.user.phone,
-          car: data.user.car,
-          capacity: data.user.capacity
+          firstname: data.user.firstname ?? "",
+          lastname: data.user.lastname ?? "",
+          phonenumber: data.user.phonenumber ?? "",
+          car: data.user.car ?? "",
+          capacity: data.user.capacity != null ? String(data.user.capacity) : ""
         })
       })
   }, [])
@@ -50,7 +51,16 @@ export default function DriverSettings() {
     })
 
     const data = await res.json()
-    if (data.success) alert("Profile updated!")
+    if (data.success) {
+      alert("Profile updated!")
+      setForm({
+        firstname: "",
+        lastname: "",
+        phonenumber: "",
+        car: "",
+        capacity: ""
+      })
+    }
   }
 
   async function changePassword() {
@@ -63,7 +73,14 @@ export default function DriverSettings() {
     })
 
     const data = await res.json()
-    if (data.success) alert("Password changed!")
+    if (data.success) {
+      alert("Password changed!")
+      setPasswordForm({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      })
+    }
     else alert(data.error)
   }
 
@@ -86,6 +103,7 @@ export default function DriverSettings() {
 
       <Separator />
 
+
       {/* Profile Section */}
       <Card>
         <CardHeader>
@@ -106,8 +124,8 @@ export default function DriverSettings() {
           />
           <Input
             placeholder="Phone Number"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            value={form.phonenumber}
+            onChange={(e) => setForm({ ...form, phonenumber: e.target.value })}
           />
 
           <Button className="md:col-span-2" onClick={updateProfile}>
