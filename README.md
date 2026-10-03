@@ -99,7 +99,7 @@ proxy.ts                # Next.js middleware — auth gate for pages & API route
 migrations/             # SQL migration files
 ```
 
-## Known Limitations
+## Known Limitations (Actively Correcting)
 
-- Distance scoring uses straight-line (haversine) distance rather than actual driving routes.
+- Distance scoring uses straight-line (haversine) distance rather than actual driving routes. 
 - "Trusted device" status is currently a client-reported flag rather than a server-verified token — suitable for low-stakes internal use, not hardened against a motivated attacker who already has valid login credentials.
