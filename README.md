@@ -9,7 +9,7 @@ A full-stack ride-coordination platform for church transportation programs. Admi
 - **Automatic ride pairing** — a greedy nearest-match algorithm scores every driver/passenger combination by a weighted blend of (driver → passenger distance) and (passenger → event distance), respects per-driver seat capacity, and surfaces anyone who couldn't be matched along with why.
 - **Manual override** — admins can reassign any passenger to a different driver inline before finalizing.
 - **Draft/commit workflow** — auto-pairing and manual edits write to a staging table first. Riders and drivers only see their assignment once an admin clicks **Commit**, so in-progress adjustments are never visible mid-edit.
-- **SMS notifications** — on commit, both the driver and passenger in each pairing get a text via Twilio with the other party's name and (for passengers) vehicle details.
+- **SMS notifications** — on commit, both the driver and passenger in each pairing get a text via Twilio with the other party's name and (for passengers) vehicle details. (To be implemented in the future)
 - **Two-factor authentication** — email-based verification codes on login, with an optional "remember this device" skip for trusted devices.
 - **Session-based authorization** — signed JWT sessions in HttpOnly cookies, enforced at the edge via Next.js middleware (`proxy.ts`) for both page access and API routes, with the verified identity forwarded downstream via request headers.
 
